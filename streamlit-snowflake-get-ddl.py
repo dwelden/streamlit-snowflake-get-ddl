@@ -9,29 +9,35 @@ st.write("This is a basic example and enhancements are needed for a mature app."
 
 session = get_active_session()
 
-db_list = session.sql("SHOW DATABASES").collect()
-db_names = [db[1] for db in db_list]
+db_list = session.sql("SHOW TERSE DATABASES").collect()
+db_names = [db.name for db in db_list if db.kind == "STANDARD"]
 
 db_name = st.selectbox("Select Database", db_names, key=f"selected_dbnames")
 if db_name:
     # Fetch schemas in selected database
-    sch_list = session.sql(f"SHOW SCHEMAS IN DATABASE {db_name}").collect()
-    sch_names = [sch[1] for sch in sch_list]
+    sch_list = session.sql(f"SHOW TERSE SCHEMAS IN DATABASE {db_name}").collect()
+    sch_names = [sch.name for sch in sch_list if sch.name != "INFORMATION_SCHEMA"]
     sch_name = st.selectbox("Select Schema", sch_names, index=0, key=f"schemaname_list")
     if sch_name:
         entity_types = [
+            "Alert",
+            "Aggregation Policy",
+            "Authentication Policy",
             "Dynamic Table",
             "Event Table",
+            "External Table",
             "File Format",
             "Function",
             "Iceberg Table",
             "Masking Policy",
             "Password Policy",
             "Pipe",
+            "Projection Policy",
             "Procedure",
             "Row Access Policy",
             "Sequence",
             "Session Policy",
+            "Storage Integration",
             "Stream",
             "Table",
             "Tag",
